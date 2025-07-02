@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Create Event</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label>Event Name</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Date</label>
+        <input type="date" name="date" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Location</label>
+        <input type="text" name="location" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Capacity</label>
+        <input type="number" name="capacity" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Description</label>
+        <textarea name="description" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Create</button>
+</form>
+{% endblock %}
