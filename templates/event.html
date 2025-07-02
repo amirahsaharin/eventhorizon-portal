@@ -11,6 +11,9 @@
                 <p class="card-text">{{ event.description }}</p>
                 <p><strong>Location:</strong> {{ event.location }}</p>
                 <p><strong>Capacity:</strong> {{ event.capacity }}</p>
+                {% if session['role'] == 'attendee' %}
+                <a href="/register-event/{{ event.id }}" class="btn btn-primary mt-2">Register</a>
+                {% endif %}
             </div>
         </div>
     </div>

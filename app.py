@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, flash
 from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, SECRET_KEY
 from models import db, User, Event, Registration
 
@@ -33,6 +33,7 @@ def login():
             session['user_id'] = user.id
             session['role'] = user.role
             return redirect('/dashboard' if user.role == 'organizer' else '/')
+        flash('Invalid credentials.')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -101,9 +102,17 @@ def delete_event(event_id):
 def register_event(event_id):
     if 'role' not in session or session['role'] != 'attendee':
         return redirect('/login')
-    reg = Registration(user_id=session['user_id'], event_id=event_id)
+
+    user_id = session['user_id']
+    existing = Registration.query.filter_by(user_id=user_id, event_id=event_id).first()
+    if existing:
+        flash("You have already registered for this event.")
+        return redirect('/')
+
+    reg = Registration(user_id=user_id, event_id=event_id)
     db.session.add(reg)
     db.session.commit()
+    flash("You are successfully registered.")
     return redirect('/')
 
 @app.route('/logout')
