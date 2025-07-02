@@ -12,7 +12,16 @@ db.init_app(app)
 @app.route('/')
 def home():
     events = Event.query.all()
-    return render_template('events.html', events=events)
+    return render_template('event.html', events=events)
+
+@app.route('/models')
+def create_models():
+    try:
+        with app.app_context():
+            db.create_all()
+        return "✅ Tables created successfully in the database."
+    except Exception as e:
+        return f"❌ Error creating tables: {str(e)}"
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
