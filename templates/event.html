@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-info mt-3" role="alert">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <h2>Upcoming Events</h2>
 <div class="row">
     {% for event in events %}
@@ -19,4 +30,5 @@
     </div>
     {% endfor %}
 </div>
+
 {% endblock %}
