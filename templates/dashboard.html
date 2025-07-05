@@ -9,6 +9,7 @@
             <th>Date</th>
             <th>Location</th>
             <th>Capacity</th>
+            <th>Registered Attendees</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -19,6 +20,7 @@
             <td>{{ event.date }}</td>
             <td>{{ event.location }}</td>
             <td>{{ event.capacity }}</td>
+            <td>{{ event.attendee_count }}</td>
             <td>
                 <a href="/edit-event/{{ event.id }}" class="btn btn-sm btn-warning">Edit</a>
                 <a href="/delete-event/{{ event.id }}" class="btn btn-sm btn-danger">Delete</a>

@@ -33,7 +33,7 @@ def login():
             session['user_id'] = user.id
             session['role'] = user.role
             return redirect('/dashboard' if user.role == 'organizer' else '/')
-        flash('Invalid credentials.')
+        flash('❌ Invalid credentials.')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -55,7 +55,21 @@ def dashboard():
     if 'role' not in session or session['role'] != 'organizer':
         return redirect('/login')
     events = Event.query.all()
-    return render_template('dashboard.html', events=events)
+
+    # Add attendee count to each event
+    event_list = []
+    for event in events:
+        attendee_count = Registration.query.filter_by(event_id=event.id).count()
+        event_list.append({
+            'id': event.id,
+            'name': event.name,
+            'date': event.date,
+            'location': event.location,
+            'capacity': event.capacity,
+            'attendee_count': attendee_count
+        })
+
+    return render_template('dashboard.html', events=event_list)
 
 @app.route('/create-event', methods=['GET', 'POST'])
 def create_event():
@@ -106,13 +120,13 @@ def register_event(event_id):
     user_id = session['user_id']
     existing = Registration.query.filter_by(user_id=user_id, event_id=event_id).first()
     if existing:
-        flash("You have already registered for this event.")
+        flash("⚠️ You have already registered for this event.")
         return redirect('/')
 
     reg = Registration(user_id=user_id, event_id=event_id)
     db.session.add(reg)
     db.session.commit()
-    flash("You are successfully registered.")
+    flash("✅ You have successfully registered for the event.")
     return redirect('/')
 
 @app.route('/logout')
