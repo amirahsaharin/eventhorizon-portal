@@ -12,7 +12,23 @@ db.init_app(app)
 @app.route('/')
 def home():
     events = Event.query.all()
-    return render_template('event.html', events=events)
+
+    # Add remaining capacity to each event
+    event_list = []
+    for event in events:
+        reg_count = Registration.query.filter_by(event_id=event.id).count()
+        remaining = max(event.capacity - reg_count, 0)
+        event_list.append({
+            'id': event.id,
+            'name': event.name,
+            'date': event.date,
+            'location': event.location,
+            'capacity': event.capacity,
+            'description': event.description,
+            'remaining_capacity': remaining
+        })
+
+    return render_template('event.html', events=event_list)
 
 @app.route('/models')
 def create_models():
@@ -118,9 +134,16 @@ def register_event(event_id):
         return redirect('/login')
 
     user_id = session['user_id']
+    event = Event.query.get_or_404(event_id)
+
     existing = Registration.query.filter_by(user_id=user_id, event_id=event_id).first()
     if existing:
         flash("⚠️ You have already registered for this event.")
+        return redirect('/')
+
+    reg_count = Registration.query.filter_by(event_id=event_id).count()
+    if reg_count >= event.capacity:
+        flash("❌ Sorry, this event is full.")
         return redirect('/')
 
     reg = Registration(user_id=user_id, event_id=event_id)
@@ -135,4 +158,4 @@ def logout():
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(d
